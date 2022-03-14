@@ -15,5 +15,5 @@ app.get("*", (_req, res) => {
   res.status(404).send("error 404");
 });
 app.listen(8000, () => {
-  console.log("listening...");
+  console.log("Listening...");
 });
