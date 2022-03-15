@@ -4,7 +4,8 @@ const router = express.Router();
 const Joi = require("joi");
 const { query } = require("express");
 
-// JOI SCHEMA
+//------------- SCHEMA -------------\\
+
 const restaurant = Joi.object({
   name: Joi.string().max(30).required(),
   address: Joi.string().alphanum().max(50).required(),
@@ -15,7 +16,8 @@ const restaurant = Joi.object({
   priceCategory: Joi.number().min(1).max(3),
 });
 
-// MIDDLEWARE
+//------------- MIDDLEWARE -------------\\
+
 function handleRestaurantId(req, res, next) {
   restaurantId = data.find((restaurant, index) => {
     restaurantIndex = index;
@@ -43,14 +45,19 @@ function checkRestaurant(req, res, next) {
   next();
 }
 
-// ROUTES GET
+//------------- ROUTES GET -------------\\
+
 router.get("/", (_req, res) => {
   res.json(data);
 });
 
+// ID
+
 router.get("/:id", handleRestaurantId, (_req, res) => {
   res.json(restaurantId);
 });
+
+// COUNTRY
 
 router.get("/country/:country", (req, res) => {
   const country = req.params.country;
@@ -68,6 +75,8 @@ router.get("/country/:country", (req, res) => {
   res.json(filterCountry);
 });
 
+// PRICE CATEGORY
+
 router.get("/priceCategory/:priceCategory", (req, res) => {
   const price = req.params.priceCategory;
 
@@ -84,7 +93,8 @@ router.get("/priceCategory/:priceCategory", (req, res) => {
   res.json(filterPrice);
 });
 
-// ROUTES POST
+//------------- ROUTES POST -------------\\
+
 router.post("/", checkRestaurant, (req, res) => {
   const addRestaurant = {
     id: data.length + 1,
@@ -103,13 +113,15 @@ router.post("/", checkRestaurant, (req, res) => {
     .json({ message: "Restaurant added", description: addRestaurant });
 });
 
-// ROUTES PATCH
+//------------- ROUTES PATCH -------------\\
+
 router.patch("/:id", handleRestaurantId, (req, res) => {
   restaurantId.name = req.body.name;
   res.json({ message: "Name changed successful", description: restaurantId });
 });
 
-// ROUTES DELETE
+//------------- ROUTES DELETE -------------\\
+
 router.delete("/:id", handleRestaurantId, (_req, res) => {
   data.splice(restaurantIndex, 1);
 

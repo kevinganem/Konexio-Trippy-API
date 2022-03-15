@@ -4,7 +4,8 @@ const router = express.Router();
 const Joi = require("joi");
 const { query } = require("express");
 
-// JOI SCHEMA
+//------------- SCHEMA -------------\\
+
 const hotel = Joi.object({
   name: Joi.string().required(),
   address: Joi.string().required(),
@@ -16,7 +17,8 @@ const hotel = Joi.object({
   priceCategory: Joi.number().min(1).max(3).required(),
 });
 
-// MIDDLEWARE
+//------------- MIDDLEWARE -------------\\
+
 function handleHotelId(req, res, next) {
   hotelId = data.find((hotel, index) => {
     hotelIndex = index;
@@ -44,10 +46,13 @@ function checkHotel(req, res, next) {
   next();
 }
 
-// ROUTES GET
+//------------- ROUTES GET -------------\\
+
 router.get("/", (_req, res) => {
   res.json(data);
 });
+
+// ID
 
 router.get("/:id", handleHotelId, (_req, res) => {
   res.json(hotelId);
@@ -68,6 +73,8 @@ router.get("/country/:country", (req, res) => {
   res.json(filterCountry);
 });
 
+// PRICE CATEGORY
+
 router.get("/priceCategory/:priceCategory", (req, res) => {
   const priceCategory = req.params.priceCategory;
 
@@ -84,39 +91,45 @@ router.get("/priceCategory/:priceCategory", (req, res) => {
   res.json(filterPrice);
 });
 
+// SPA & POOL
+
 router.get("/activities/:activities", (req, res) => {
   const activities = req.params.activities;
 
   switch (activities) {
     case "hasPool":
-      const pool = req.params.hasPool;
-      const filterPool = data.filter((elem) => elem.pool == pool);
+      const hasPool = [];
+      const filterPool = data.filter((elem) => {
+        elem.hasPool === true ? hasPool.push(elem) : null;
+      });
 
-      if (filterPool.length < 1) {
+      if (!filterPool) {
         return res.json({
-          error: `Error. ${pool} is unknown`,
+          error: `Error. ${hasPool} is unknown`,
         });
       }
 
-      res.json(filterPool);
-      console.log("ok");
+      res.json(hasPool);
       break;
     case "hasSpa":
-      const spa = req.params.hasSpa;
-      const filterSpa = data.filter((elem) => elem.spa == spa);
+      const hasSpa = [];
+      const filterSpa = data.filter((elem) => {
+        elem.hasSpa === true ? hasSpa.push(elem) : null;
+      });
 
-      if (filterSpa.length < 1) {
+      if (!filterSpa) {
         return res.json({
           error: `Error. ${spa} is unknown`,
         });
       }
 
-      res.json(filterSpa);
+      res.json(hasSpa);
       break;
   }
 });
 
-// ROUTES POST
+//------------- ROUTES POST -------------\\
+
 router.post("/", checkHotel, (req, res) => {
   const addHotel = {
     id: data.length + 1,
@@ -134,13 +147,15 @@ router.post("/", checkHotel, (req, res) => {
   res.status(200).json({ message: "Hotel added", description: addHotel });
 });
 
-// ROUTES PATCH
+//------------- ROUTES PATCH -------------\\
+
 router.patch("/:id", handleHotelId, (req, res) => {
   hotelId.name = req.body.name;
   res.json({ message: "Name changed successful", description: hotelId });
 });
 
-// ROUTES DELETE
+//------------- ROUTES DELETE -------------\\
+
 router.delete("/:id", handleHotelId, (_req, res) => {
   data.splice(hotelIndex, 1);
 
