@@ -35,7 +35,7 @@ function checkHotel(req, res, next) {
   const validation = hotel.validate(req.body);
   if (validation.error) {
     return res.status(400).json({
-      message: "error 400 bad request",
+      message: "Error 400",
       description: validation.error.details[0].message,
     });
   }
