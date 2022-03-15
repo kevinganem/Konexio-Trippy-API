@@ -72,7 +72,7 @@ router.get("/priceCategory/:priceCategory", (req, res) => {
   const price = req.params.priceCategory;
 
   const filterPrice = data.filter(
-    (elem) => elem.price.toLowerCase() === price.toLowerCase()
+    (elem) => elem.price.toString() === price.toString()
   );
 
   if (filterPrice.length < 1) {
