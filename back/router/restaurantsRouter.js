@@ -13,15 +13,73 @@ const restaurant = Joi.object({
   priceCategory: Joi.number().min(1).max(3),
 });
 
-router.get("/", (_req, res) => {
-  res.json(data);
-});
-router.get("/:id", (req, res) => {
-  const restaurantId = data.find((restaurant) => {
+// MIDDLEWARE
+function handleRestaurantId(req, res, next) {
+  restaurantId = data.find((restaurant, index) => {
+    restaurantIndex = index;
     return restaurant.id.toString() === req.params.id.toString();
   });
 
+  if (!restaurantId) {
+    return res.status(400).json({
+      error: "Error 400",
+      description: `${req.params.id} id does not exists`,
+    });
+  }
+
+  next();
+}
+
+function checkRestaurant(req, res, next) {
+  const validation = restaurant.validate(req.body);
+  if (validation.error) {
+    return res.status(400).json({
+      message: "Error 400",
+      description: validation.error.details[0].message,
+    });
+  }
+  next();
+}
+
+// ROUTES GET
+router.get("/", (_req, res) => {
+  res.json(data);
+});
+
+router.get("/:id", handleRestaurantId, (_req, res) => {
   res.json(restaurantId);
+});
+
+// ROUTES POST
+router.post("/", checkRestaurant, (req, res) => {
+  const addRestaurant = {
+    id: data.length + 1,
+    name: req.body.name,
+    address: req.body.address,
+    city: req.body.city,
+    country: req.body.country,
+    stars: req.body.stars,
+    cuisine: req.body.cuisine,
+    priceCategory: req.body.priceCategory,
+  };
+
+  data.push(addRestaurant);
+  res
+    .status(200)
+    .json({ message: "Restaurant added", description: addRestaurant });
+});
+
+// ROUTES PATCH
+router.patch("/:id", handleRestaurantId, (req, res) => {
+  restaurantId.name = req.body.name;
+  res.json({ message: "Name changed successful", description: restaurantId });
+});
+
+// ROUTES DELETE
+router.delete("/:id", handleRestaurantId, (_req, res) => {
+  data.splice(restaurantIndex, 1);
+
+  res.json(data);
 });
 
 module.exports = router;
