@@ -5,7 +5,9 @@ const app = express();
 
 app.use(express.json());
 app.get("/", (_req, res) => {
-  res.send("...");
+  res.send(
+    "use /hotels or /restaurants with the method GET to see or POST to add"
+  );
 });
 
 app.use("/hotels", hotelsRouter);
