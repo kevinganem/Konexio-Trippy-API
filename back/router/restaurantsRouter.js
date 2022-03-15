@@ -1,15 +1,16 @@
-const data = require("../restaurants.json");
+const data = require("../json/restaurants.json");
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const { query } = require("express");
 
+// JOI SCHEMA
 const restaurant = Joi.object({
   name: Joi.string().max(30).required(),
   address: Joi.string().alphanum().max(50).required(),
   city: Joi.string().max(30).required(),
   country: Joi.string().max(30).required(),
-  stars: Joi.number.min(1).max(5).required(),
+  stars: Joi.number().min(1).max(5).required(),
   cuisine: Joi.string().max(30).required(),
   priceCategory: Joi.number().min(1).max(3),
 });
@@ -51,7 +52,7 @@ router.get("/:id", handleRestaurantId, (_req, res) => {
   res.json(restaurantId);
 });
 
-router.get("/:country", (req, res) => {
+router.get("/country/:country", (req, res) => {
   const country = req.params.country;
 
   const filterCountry = data.filter(
@@ -67,7 +68,7 @@ router.get("/:country", (req, res) => {
   res.json(filterCountry);
 });
 
-router.get("/:priceCategory", (req, res) => {
+router.get("/priceCategory/:priceCategory", (req, res) => {
   const price = req.params.priceCategory;
 
   const filterPrice = data.filter(

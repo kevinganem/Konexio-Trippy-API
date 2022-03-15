@@ -4,6 +4,7 @@ const router = express.Router();
 const Joi = require("joi");
 const { query } = require("express");
 
+// JOI SCHEMA
 const hotel = Joi.object({
   name: Joi.string().required(),
   address: Joi.string().required(),
@@ -52,7 +53,7 @@ router.get("/:id", handleHotelId, (_req, res) => {
   res.json(hotelId);
 });
 
-router.get("/:country", (req, res) => {
+router.get("/country/:country", (req, res) => {
   const country = req.params.country;
 
   const filterCountry = data.filter(
@@ -64,35 +65,32 @@ router.get("/:country", (req, res) => {
       error: `Error. ${country} is unknown`,
     });
   }
-
   res.json(filterCountry);
 });
 
-router.get("/:priceCategory", (req, res) => {
-  const price = req.params.priceCategory;
+router.get("/priceCategory/:priceCategory", (req, res) => {
+  const priceCategory = req.params.priceCategory;
 
   const filterPrice = data.filter(
-    (elem) => elem.price.toLowerCase() === price.toLowerCase()
+    (elem) => elem.priceCategory.toString() === priceCategory.toString()
   );
 
   if (filterPrice.length < 1) {
     return res.json({
-      error: `Error. ${price} is unavailable`,
+      error: `Error. ${priceCategory} is unavailable`,
     });
   }
 
   res.json(filterPrice);
 });
 
-router.get("/:activities", (req, res) => {
+router.get("/activities/:activities", (req, res) => {
   const activities = req.params.activities;
 
   switch (activities) {
     case "hasPool":
       const pool = req.params.hasPool;
-      const filterPool = data.filter(
-        (elem) => elem.price.toLowerCase() === price.toLowerCase()
-      );
+      const filterPool = data.filter((elem) => elem.pool == pool);
 
       if (filterPool.length < 1) {
         return res.json({
@@ -101,12 +99,11 @@ router.get("/:activities", (req, res) => {
       }
 
       res.json(filterPool);
+      console.log("ok");
       break;
     case "hasSpa":
-      const spa = req.params.hasPool;
-      const filterSpa = data.filter(
-        (elem) => elem.price.toLowerCase() === price.toLowerCase()
-      );
+      const spa = req.params.hasSpa;
+      const filterSpa = data.filter((elem) => elem.spa == spa);
 
       if (filterSpa.length < 1) {
         return res.json({
@@ -117,20 +114,6 @@ router.get("/:activities", (req, res) => {
       res.json(filterSpa);
       break;
   }
-
-  const price = req.params.priceCategory;
-
-  const filterPrice = data.filter(
-    (elem) => elem.price.toLowerCase() === price.toLowerCase()
-  );
-
-  if (filterPrice.length < 1) {
-    return res.json({
-      error: `Error. ${price} is unavailable`,
-    });
-  }
-
-  res.json(filterPrice);
 });
 
 // ROUTES POST
