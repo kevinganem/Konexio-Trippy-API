@@ -2,6 +2,7 @@ const data = require("../restaurants.json");
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
+const { query } = require("express");
 
 const restaurant = Joi.object({
   name: Joi.string().max(30).required(),
@@ -48,6 +49,38 @@ router.get("/", (_req, res) => {
 
 router.get("/:id", handleRestaurantId, (_req, res) => {
   res.json(restaurantId);
+});
+
+router.get("/:country", (req, res) => {
+  const country = req.params.country;
+
+  const filterCountry = data.filter(
+    (elem) => elem.country.toLowerCase() === country.toLowerCase()
+  );
+
+  if (filterCountry.length < 1) {
+    return res.json({
+      error: `Error. ${country} is unknown`,
+    });
+  }
+
+  res.json(filterCountry);
+});
+
+router.get("/:priceCategory", (req, res) => {
+  const price = req.params.priceCategory;
+
+  const filterPrice = data.filter(
+    (elem) => elem.price.toLowerCase() === price.toLowerCase()
+  );
+
+  if (filterPrice.length < 1) {
+    return res.json({
+      error: `Error. ${price} is unavailable`,
+    });
+  }
+
+  res.json(filterPrice);
 });
 
 // ROUTES POST

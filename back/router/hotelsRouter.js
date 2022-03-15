@@ -2,6 +2,7 @@ const data = require("../json/hotels.json");
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
+const { query } = require("express");
 
 const hotel = Joi.object({
   name: Joi.string().required(),
@@ -49,6 +50,87 @@ router.get("/", (_req, res) => {
 
 router.get("/:id", handleHotelId, (_req, res) => {
   res.json(hotelId);
+});
+
+router.get("/:country", (req, res) => {
+  const country = req.params.country;
+
+  const filterCountry = data.filter(
+    (elem) => elem.country.toLowerCase() === country.toLowerCase()
+  );
+
+  if (filterCountry.length < 1) {
+    return res.json({
+      error: `Error. ${country} is unknown`,
+    });
+  }
+
+  res.json(filterCountry);
+});
+
+router.get("/:priceCategory", (req, res) => {
+  const price = req.params.priceCategory;
+
+  const filterPrice = data.filter(
+    (elem) => elem.price.toLowerCase() === price.toLowerCase()
+  );
+
+  if (filterPrice.length < 1) {
+    return res.json({
+      error: `Error. ${price} is unavailable`,
+    });
+  }
+
+  res.json(filterPrice);
+});
+
+router.get("/:activities", (req, res) => {
+  const activities = req.params.activities;
+
+  switch (activities) {
+    case "hasPool":
+      const pool = req.params.hasPool;
+      const filterPool = data.filter(
+        (elem) => elem.price.toLowerCase() === price.toLowerCase()
+      );
+
+      if (filterPool.length < 1) {
+        return res.json({
+          error: `Error. ${pool} is unknown`,
+        });
+      }
+
+      res.json(filterPool);
+      break;
+    case "hasSpa":
+      const spa = req.params.hasPool;
+      const filterSpa = data.filter(
+        (elem) => elem.price.toLowerCase() === price.toLowerCase()
+      );
+
+      if (filterSpa.length < 1) {
+        return res.json({
+          error: `Error. ${spa} is unknown`,
+        });
+      }
+
+      res.json(filterSpa);
+      break;
+  }
+
+  const price = req.params.priceCategory;
+
+  const filterPrice = data.filter(
+    (elem) => elem.price.toLowerCase() === price.toLowerCase()
+  );
+
+  if (filterPrice.length < 1) {
+    return res.json({
+      error: `Error. ${price} is unavailable`,
+    });
+  }
+
+  res.json(filterPrice);
 });
 
 // ROUTES POST
